@@ -1,0 +1,15 @@
+meta {
+  name: Books Index
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/livros
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
