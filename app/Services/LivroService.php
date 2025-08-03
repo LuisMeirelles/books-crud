@@ -74,10 +74,19 @@ class LivroService
      */
     public function buscarPorTitulo(?string $titulo = null): Collection
     {
-        return Livro::when(
+        $livros = Livro::when(
             !empty($titulo),
             fn(Builder $query) => $query->where('titulo', 'like', "%{$titulo}%")
         )->get();
+
+        foreach ($livros as $livro) {
+            $livro->load(['indices' => function ($query) {
+                $query->whereNull('indice_pai_id')
+                    ->with('subindicesRecursivos');
+            }]);
+        }
+
+        return $livros;
     }
 
     /**
