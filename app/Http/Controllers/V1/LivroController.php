@@ -39,15 +39,15 @@ class LivroController extends Controller
             $livro = $indiceEncontrado->livro;
 
             $indicesPaisIds = $indiceEncontrado->indices_pais->pluck('id')->toArray();
+            $indicesBuscadosIds = [$indiceEncontrado->id];
 
-            $livro->load(['indices' => function ($query) use ($indicesPaisIds) {
+            $livro->load(['indices' => function ($query) use ($indicesPaisIds, $indicesBuscadosIds) {
                 $query->whereNull('indice_pai_id')
-                    ->whereIn('id', $indicesPaisIds)
-                    ->orWhereHas('subindicesRecursivos', function ($subQuery) use ($indicesPaisIds) {
-                        $subQuery->whereIn('id', $indicesPaisIds);
+                    ->where(function ($q) use ($indicesPaisIds) {
+                        $q->whereIn('id', $indicesPaisIds);
                     })
-                    ->with(['subindicesRecursivos' => function ($subQuery) use ($indicesPaisIds) {
-                        $this->filtrarSubindicesRecursivos($subQuery, $indicesPaisIds);
+                    ->with(['subindicesRecursivos' => function ($subQuery) use ($indicesPaisIds, $indicesBuscadosIds) {
+                        $this->filtrarSubindicesRecursivos($subQuery, $indicesPaisIds, $indicesBuscadosIds);
                     }]);
             }]);
 
@@ -57,11 +57,19 @@ class LivroController extends Controller
         return StoreLivroResource::collection($livrosEncontrados->unique('id'));
     }
 
-    private function filtrarSubindicesRecursivos($query, array $indicesPaisIds)
+    private function filtrarSubindicesRecursivos($query, array $indicesPaisIds, array $indicesBuscadosIds = [])
     {
         $query->whereIn('id', $indicesPaisIds)
-            ->with(['subindicesRecursivos' => function ($subQuery) use ($indicesPaisIds) {
-                $this->filtrarSubindicesRecursivos($subQuery, $indicesPaisIds);
+            ->with(['subindicesRecursivos' => function ($subQuery) use ($indicesPaisIds, $indicesBuscadosIds) {
+                $parentId = $subQuery->getParentKey();
+
+                if (in_array($parentId, $indicesBuscadosIds)) {
+                    $subQuery->whereRaw('1=0');
+                } else {
+                    $subQuery->whereIn('id', $indicesPaisIds);
+
+                    $this->filtrarSubindicesRecursivos($subQuery, $indicesPaisIds, $indicesBuscadosIds);
+                }
             }]);
     }
 

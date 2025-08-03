@@ -18,7 +18,7 @@ class IndiceResource extends JsonResource
             'id' => $this->id,
             'titulo' => $this->titulo,
             'pagina' => $this->pagina,
-            'subindices' => self::collection($this->subindices),
+            'subindices' => self::collection($this->subindicesRecursivos),
         ];
     }
 }
