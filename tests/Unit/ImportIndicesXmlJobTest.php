@@ -35,7 +35,7 @@ XML;
             Mockery::on(function ($indices) {
                 return count($indices) === 1 &&
                        $indices[0]['titulo'] === 'Capítulo XML' &&
-                       $indices[0]['pagina'] === '1' &&
+                       $indices[0]['pagina'] === 1 &&
                        count($indices[0]['subindices']) === 2 &&
                        $indices[0]['subindices'][0]['titulo'] === 'Subcapítulo XML' &&
                        count($indices[0]['subindices'][0]['subindices']) === 1 &&
@@ -65,9 +65,9 @@ XML;
     expect($result)->toBeArray()
         ->and($result)->toHaveCount(2)
         ->and($result[0]['titulo'])->toBe('Item 1')
-        ->and($result[0]['pagina'])->toBe('10')
+        ->and($result[0]['pagina'])->toBe(10)
         ->and($result[1]['titulo'])->toBe('Item 2')
-        ->and($result[1]['pagina'])->toBe('20');
+        ->and($result[1]['pagina'])->toBe(20);
 });
 
 test('job lida corretamente com XML de estrutura aninhada complexa', function () {
