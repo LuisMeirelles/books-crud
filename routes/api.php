@@ -9,7 +9,7 @@ Route::prefix('v1')
 
         Route::middleware('auth:sanctum')
             ->group(function () {
-                Route::apiResource('livros', V1\BookController::class)
+                Route::apiResource('livros', V1\LivroController::class)
                     ->only(['index', 'store']);
             });
     });

@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Book;
+use App\Models\Livro;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BookFactory extends Factory
 {
-    protected $model = Book::class;
+    protected $model = Livro::class;
 
     public function definition(): array
     {
