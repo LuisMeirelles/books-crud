@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\LivroService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
@@ -13,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(LivroService::class, LivroService::class);
     }
 
     /**
