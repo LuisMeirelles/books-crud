@@ -69,6 +69,18 @@ Para ver detalhes e cobertura de código:
 docker compose exec app php artisan test --coverage
 ```
 
+## Debugging
+
+O ambiente de desenvolvimento possui o Xdebug habilitado, facilitando a depuração durante o desenvolvimento.
+
+### Configuração do Xdebug
+
+O Xdebug já está pré-configurado no ambiente Docker com as seguintes funcionalidades:
+
+- **Debugging remoto**: Permite a depuração passo a passo do código
+- **Profiling**: Analisa o desempenho da aplicação
+- **Code coverage**: Suporte para análise de cobertura de código nos testes
+
 ## Documentação da API
 
 Este projeto utiliza o [Bruno API](https://www.usebruno.com/) como cliente de API para testar e documentar os endpoints. A estrutura completa dos endpoints e a documentação da API podem ser encontradas na pasta `docs/` do projeto.
