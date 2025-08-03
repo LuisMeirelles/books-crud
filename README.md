@@ -39,25 +39,20 @@ O sistema permite o gerenciamento completo de livros e seus índices, oferecendo
    cp .env.example .env
    ```
 
-3. Inicie os containers Docker:
+3. Instale as dependências e gere a chave da aplicação:
+   ```bash
+   docker compose run --rm -it app composer install
+   docker compose run --rm -it app php artisan key:generate
+   ```
+
+4. Inicie os containers Docker:
    ```bash
    docker compose up -d
    ```
 
-4. Instale as dependências e gere a chave da aplicação:
-   ```bash
-   docker compose exec app composer install
-   docker compose exec app php artisan key:generate
-   ```
-
 5. Execute as migrações para criar as tabelas do banco de dados:
    ```bash
-   docker compose exec app php artisan migrate
-   ```
-
-6. Popule o banco de dados com dados de exemplo:
-   ```bash
-   docker compose exec app php artisan db:seed
+   docker compose exec app php artisan migrate --seed
    ```
 
 ## Testes
