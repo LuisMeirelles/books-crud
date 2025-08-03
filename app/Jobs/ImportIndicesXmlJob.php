@@ -28,25 +28,40 @@ class ImportIndicesXmlJob implements ShouldQueue
     {
         $livro = Livro::findOrFail($this->livroId);
 
-        $xml = simplexml_load_string($this->xmlContent);
+        $xml = @simplexml_load_string($this->xmlContent);
+
+        if ($xml === false) {
+            throw new \InvalidArgumentException('Formato XML inválido');
+        }
 
         $indices = $this->xmlItemsToArray($xml);
 
         $livroService->criarIndicesRecursivamente($livro, $indices);
     }
 
-    private function xmlItemsToArray($xmlItems): array
+    /**
+     * Converte items XML em um array de índices
+     *
+     * @param \SimpleXMLElement $xmlItems
+     * @return array
+     * @throws \InvalidArgumentException quando um item não tem os atributos obrigatórios
+     */
+    private function xmlItemsToArray(\SimpleXMLElement $xmlItems): array
     {
         $result = [];
 
         foreach ($xmlItems as $item) {
+            if (!isset($item['titulo']) || !isset($item['pagina'])) {
+                throw new \InvalidArgumentException('Item XML inválido: todos os itens devem ter os atributos "titulo" e "pagina"');
+            }
+
             $node = [
                 'titulo' => (string) $item['titulo'],
-                'pagina' => (string) $item['pagina'],
+                'pagina' => (int) $item['pagina'],
                 'subindices' => []
             ];
 
-            if ($item->item) {
+            if ($item->item && count($item->item) > 0) {
                 $node['subindices'] = $this->xmlItemsToArray($item->item);
             }
 

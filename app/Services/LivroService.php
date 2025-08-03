@@ -57,7 +57,7 @@ class LivroService
                 $parentId = $subQuery->getParentKey();
 
                 if (in_array($parentId, $indicesBuscadosIds)) {
-                    $subQuery->whereRaw('1=0');
+                    $subQuery->where(false);
                 } else {
                     $subQuery->whereIn('id', $indicesPaisIds);
 
