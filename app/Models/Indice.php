@@ -15,6 +15,11 @@ class Indice extends Model
         return $this->belongsTo(Livro::class);
     }
 
+    public function indicePai(): BelongsTo
+    {
+        return $this->belongsTo(Indice::class, 'indice_pai_id');
+    }
+
     public function subindices(): HasMany
     {
         return $this->hasMany(Indice::class, 'indice_pai_id');
@@ -23,6 +28,19 @@ class Indice extends Model
     public function subindicesRecursivos(): HasMany
     {
         return $this->subindices()->with('subindicesRecursivos');
+    }
+
+    public function getIndicesPaisAttribute()
+    {
+        $indices = collect([$this]);
+        $pai = $this->indicePai;
+
+        while ($pai) {
+            $indices->push($pai);
+            $pai = $pai->indicePai;
+        }
+
+        return $indices->reverse()->values();
     }
 
 }

@@ -22,7 +22,8 @@ class ListLivrosRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'titulo' => ['nullable', 'string']
+            'titulo' => ['nullable', 'string'],
+            'titulo_do_indice' => ['nullable', 'string'],
         ];
     }
 

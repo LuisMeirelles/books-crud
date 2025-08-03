@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LivroRequest;
 use App\Http\Requests\ListLivrosRequest;
 use App\Http\Resources\StoreLivroResource;
+use App\Models\Indice;
 use App\Models\Livro;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -18,10 +19,50 @@ class LivroController extends Controller
     {
         $params = $request->validated();
 
-        return Livro::when(
+        if (isset($params['titulo_do_indice'])) {
+            return $this->buscarPorTituloDoIndice($params['titulo_do_indice']);
+        }
+
+        return StoreLivroResource::collection(Livro::when(
             isset($params['titulo']),
-            fn(Builder $query) => $query->where('titulo', $params['titulo'])
-        )->get();
+            fn(Builder $query) => $query->where('titulo', 'like', "%{$params['titulo']}%")
+        )->get());
+    }
+
+    private function buscarPorTituloDoIndice(string $tituloDoIndice)
+    {
+        $indices = Indice::where('titulo', 'like', "%{$tituloDoIndice}%")->get();
+
+        $livrosEncontrados = collect();
+
+        foreach ($indices as $indiceEncontrado) {
+            $livro = $indiceEncontrado->livro;
+
+            $indicesPaisIds = $indiceEncontrado->indices_pais->pluck('id')->toArray();
+
+            $livro->load(['indices' => function ($query) use ($indicesPaisIds) {
+                $query->whereNull('indice_pai_id')
+                    ->whereIn('id', $indicesPaisIds)
+                    ->orWhereHas('subindicesRecursivos', function ($subQuery) use ($indicesPaisIds) {
+                        $subQuery->whereIn('id', $indicesPaisIds);
+                    })
+                    ->with(['subindicesRecursivos' => function ($subQuery) use ($indicesPaisIds) {
+                        $this->filtrarSubindicesRecursivos($subQuery, $indicesPaisIds);
+                    }]);
+            }]);
+
+            $livrosEncontrados->push($livro);
+        }
+
+        return StoreLivroResource::collection($livrosEncontrados->unique('id'));
+    }
+
+    private function filtrarSubindicesRecursivos($query, array $indicesPaisIds)
+    {
+        $query->whereIn('id', $indicesPaisIds)
+            ->with(['subindicesRecursivos' => function ($subQuery) use ($indicesPaisIds) {
+                $this->filtrarSubindicesRecursivos($subQuery, $indicesPaisIds);
+            }]);
     }
 
     /**
@@ -59,5 +100,4 @@ class LivroController extends Controller
             }
         }
     }
-
 }
