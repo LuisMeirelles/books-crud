@@ -110,7 +110,7 @@ class LivroService
      * @param array $indices
      * @param int|null $indicePaiId
      */
-    private function criarIndicesRecursivamente(Livro $livro, array $indices, ?int $indicePaiId = null): void
+    public function criarIndicesRecursivamente(Livro $livro, array $indices, ?int $indicePaiId = null): void
     {
         foreach ($indices as $indiceData) {
             $indice = $livro->indices()->create([

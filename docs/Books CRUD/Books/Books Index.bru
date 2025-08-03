@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{base_url}}/livros?titulo=exemplo&titulo_do_indice=Bet
+  url: {{base_url}}/livros
   body: none
   auth: inherit
 }
 
 params:query {
-  titulo: exemplo
-  titulo_do_indice: Bet
+  ~titulo: exemplo
+  ~titulo_do_indice: Bet
 }
 
 settings {

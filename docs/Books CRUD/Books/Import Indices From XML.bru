@@ -1,0 +1,27 @@
+meta {
+  name: Import Indices From XML
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/livros/:livroId/importar-indices-xml
+  body: multipartForm
+  auth: inherit
+}
+
+params:path {
+  livroId: 1
+}
+
+body:multipart-form {
+  xml: @file(/home/meirelles/teste.xml)
+}
+
+body:file {
+  file: @file(/home/meirelles/teste.xml) @contentType(application/xml)
+}
+
+settings {
+  encodeUrl: true
+}

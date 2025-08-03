@@ -11,5 +11,7 @@ Route::prefix('v1')
             ->group(function () {
                 Route::apiResource('livros', V1\LivroController::class)
                     ->only(['index', 'store']);
+
+                Route::post('livros/{livro}/importar-indices-xml', [V1\LivroController::class, 'importIndicesXml']);
             });
     });

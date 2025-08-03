@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ImportIndicesXmlRequest;
 use App\Http\Requests\LivroRequest;
 use App\Http\Requests\ListLivrosRequest;
 use App\Http\Resources\StoreLivroResource;
+use App\Jobs\ImportIndicesXmlJob;
+use App\Models\Livro;
 use App\Services\LivroService;
 
 class LivroController extends Controller
@@ -39,5 +42,15 @@ class LivroController extends Controller
         $livro = $this->livroService->criarLivro($params, $request->user()->id);
 
         return new StoreLivroResource($livro);
+    }
+
+    public function importIndicesXml(ImportIndicesXmlRequest $request, Livro $livro)
+    {
+        $realPath = $request->file('xml')->getRealPath();
+        $xmlContent = file_get_contents($realPath);
+
+        ImportIndicesXmlJob::dispatch($livro->id, $xmlContent);
+
+        return response()->json(['status' => 'Importação iniciada!']);
     }
 }
