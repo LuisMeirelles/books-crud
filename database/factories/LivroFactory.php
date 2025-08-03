@@ -6,7 +6,7 @@ use App\Models\Livro;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BookFactory extends Factory
+class LivroFactory extends Factory
 {
     protected $model = Livro::class;
 
