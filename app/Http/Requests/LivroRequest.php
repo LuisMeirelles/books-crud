@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\RecursiveIndicesRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LivroRequest extends FormRequest
@@ -10,12 +11,7 @@ class LivroRequest extends FormRequest
     {
         return [
             'titulo' => ['required'],
-            'indices' => ['required', 'array'],
-            'indices.*.titulo' => ['required'],
-            'indices.*.pagina' => ['required', 'numeric'],
-            'indices.*.subindices' => ['array'],
-            'indices.*.subindices.*.titulo' => ['required'],
-            'indices.*.subindices.*.pagina' => ['required', 'numeric']
+            'indices' => ['required', 'array', new RecursiveIndicesRule],
         ];
     }
 

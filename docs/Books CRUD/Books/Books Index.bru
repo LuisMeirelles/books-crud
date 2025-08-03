@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{base_url}}/livros?titulo=exemplo
+  url: {{base_url}}/livros
   body: none
   auth: inherit
 }
 
 params:query {
-  titulo: exemplo
+  ~titulo: exemplo
 }
 
 settings {
