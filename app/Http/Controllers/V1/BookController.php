@@ -4,17 +4,23 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BookRequest;
-use App\Http\Resources\BookResource;
+use App\Http\Requests\ListBooksRequest;
 use App\Models\Book;
+use Illuminate\Database\Eloquent\Builder;
 
 class BookController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(ListBooksRequest $request)
     {
-        return BookResource::collection(Book::all());
+        $params = $request->validated();
+
+        return Book::when(
+            isset($params['titulo']),
+            fn(Builder $query) => $query->where('titulo', $params['titulo'])
+        )->get();
     }
 
     /**
@@ -24,9 +30,9 @@ class BookController extends Controller
     {
         $params = $request->validated();
 
-        return new BookResource(Book::create([
+        return Book::create([
             'usuario_publicador_id' => $request->user()->id,
             'titulo' => $params['titulo'],
-        ]));
+        ]);
     }
 }
